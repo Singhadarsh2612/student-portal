@@ -273,9 +273,10 @@ exports.getStudentAssignments = async (req, res) => {
       });
     }
 
-    // Get assignments for THIS SPECIFIC STUDENT only
+    // Get assignments for student's subjects
+    const subjectIds = student.assignedSubjects.map(s => s._id);
     const assignments = await Assignment.find({ 
-      studentId: req.params.id  // Filter by studentId
+      subjectId: { $in: subjectIds } 
     }).populate('subjectId').sort({ dueDate: 1 });
 
     // Categorize and format assignments

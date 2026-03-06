@@ -21,13 +21,13 @@ const connectDB = async () => {
 const randomNumber = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 
 // Helper function to get random date in February (last 2 weeks)
-const getFebruaryDate = (year = 2026) => {
+const getFebruaryDate = (year = 2025) => {
   const day = randomNumber(15, 28); // Last 2 weeks of February
   return new Date(year, 1, day); // Month is 0-indexed, so 1 = February
 };
 
 // Helper function to get random date in April (last 3 weeks)
-const getAprilDate = (year = 2026) => {
+const getAprilDate = (year = 2025) => {
   const day = randomNumber(10, 30); // Last 3 weeks of April
   return new Date(year, 3, day); // Month is 0-indexed, so 3 = April
 };
@@ -143,79 +143,43 @@ const studentsData = [
   }
 ];
 
-// HARDCODED 8 assignments - same for all students
-const hardcodedAssignments = [
+// Assignment templates
+const assignmentTemplates = [
   {
-    title: 'Binary Search Tree Implementation',
-    description: 'Implement BST with insert, delete, and search operations in C++',
-    assignedDate: new Date(2026, 2, 1), // March 1, 2026
-    dueDate: new Date(2026, 2, 15), // March 15, 2026
-    totalMarks: 100,
-    status: 'submitted', // COMPLETED 1
-    priority: 'high'
+    title: 'Data Structure Implementation',
+    description: 'Implement Binary Search Tree with insert, delete, and search operations',
+    priority: 'high',
+    totalMarks: 100
   },
   {
-    title: 'Database Normalization Project',
-    description: 'Normalize a given database schema up to 3NF and create ER diagram',
-    assignedDate: new Date(2026, 2, 3), // March 3, 2026
-    dueDate: new Date(2026, 2, 16), // March 16, 2026
-    totalMarks: 75,
-    status: 'submitted', // COMPLETED 2
-    priority: 'medium'
+    title: 'Database Design Project',
+    description: 'Design and implement a relational database for a library management system',
+    priority: 'high',
+    totalMarks: 100
   },
   {
-    title: 'Process Scheduling Algorithms',
-    description: 'Compare FCFS, SJF, and Round Robin scheduling algorithms',
-    assignedDate: new Date(2026, 2, 5), // March 5, 2026
-    dueDate: new Date(2026, 2, 15), // March 15, 2026 - UPCOMING
-    totalMarks: 50,
-    status: 'pending',
-    priority: 'high'
+    title: 'Process Scheduling Simulation',
+    description: 'Create a simulation of various CPU scheduling algorithms',
+    priority: 'medium',
+    totalMarks: 75
   },
   {
-    title: 'Socket Programming',
-    description: 'Create a client-server chat application using TCP sockets',
-    assignedDate: new Date(2026, 2, 7), // March 7, 2026
-    dueDate: new Date(2026, 2, 16), // March 16, 2026 - UPCOMING
-    totalMarks: 100,
-    status: 'pending',
-    priority: 'high'
+    title: 'Network Protocol Analysis',
+    description: 'Analyze TCP/IP protocol using Wireshark and write a detailed report',
+    priority: 'medium',
+    totalMarks: 50
   },
   {
-    title: 'REST API Development',
-    description: 'Build a RESTful API for a todo application using Express.js',
-    assignedDate: new Date(2026, 2, 8), // March 8, 2026
-    dueDate: new Date(2026, 2, 16), // March 16, 2026 - UPCOMING
-    totalMarks: 150,
-    status: 'pending',
-    priority: 'high'
+    title: 'Full Stack Web Application',
+    description: 'Build a CRUD application using Node.js, Express, and MongoDB',
+    priority: 'high',
+    totalMarks: 150
   },
   {
-    title: 'Unit Testing Project',
-    description: 'Write comprehensive unit tests using Jest for a given module',
-    assignedDate: new Date(2026, 2, 9), // March 9, 2026
-    dueDate: new Date(2026, 2, 17), // March 17, 2026 - UPCOMING
-    totalMarks: 50,
-    status: 'pending',
-    priority: 'medium'
-  },
-  {
-    title: 'SQL Query Optimization',
-    description: 'Optimize slow queries and implement proper indexing strategies',
-    assignedDate: new Date(2026, 2, 10), // March 10, 2026
-    dueDate: new Date(2026, 2, 17), // March 17, 2026 - UPCOMING
-    totalMarks: 75,
-    status: 'pending',
-    priority: 'medium'
-  },
-  {
-    title: 'Frontend Development Challenge',
-    description: 'Create a responsive portfolio website using React and Tailwind CSS',
-    assignedDate: new Date(2026, 2, 11), // March 11, 2026
-    dueDate: new Date(2026, 2, 17), // March 17, 2026 - UPCOMING
-    totalMarks: 100,
-    status: 'pending',
-    priority: 'high'
+    title: 'Software Testing Case Study',
+    description: 'Write test cases and perform unit testing for a given software module',
+    priority: 'low',
+    totalMarks: 50
   }
 ];
 
@@ -257,13 +221,49 @@ const seedDatabase = async () => {
         quiz5Date: aprilDates[1],
         quiz6Date: aprilDates[2],
         endSemDate: aprilDates[3], // End sem after all quizzes
-        academicYear: '2025-2026',
-        semester: 'Spring 2026'
+        academicYear: '2024-2025',
+        semester: 'Spring 2025'
       });
       
       await examSchedule.save();
     }
     console.log(`✅ Created ${subjects.length} exam schedules`);
+
+    // Create assignments for all subjects
+    console.log('📝 Creating assignments...');
+    let assignmentCount = 0;
+    for (let i = 0; i < subjects.length; i++) {
+      const subject = subjects[i];
+      const template = assignmentTemplates[i];
+      
+      // Create 2-3 assignments per subject
+      const numAssignments = randomNumber(2, 3);
+      
+      for (let j = 0; j < numAssignments; j++) {
+        const assignedDate = new Date(2025, randomNumber(0, 2), randomNumber(1, 28)); // Jan-Mar
+        const daysToComplete = randomNumber(7, 21);
+        const dueDate = new Date(assignedDate);
+        dueDate.setDate(dueDate.getDate() + daysToComplete);
+        
+        // Randomly mark some as submitted
+        const isSubmitted = Math.random() > 0.5;
+        
+        const assignment = new Assignment({
+          subjectId: subject._id,
+          title: `${template.title} ${j + 1}`,
+          description: template.description,
+          assignedDate,
+          dueDate,
+          totalMarks: template.totalMarks,
+          status: isSubmitted ? 'submitted' : 'pending',
+          priority: template.priority
+        });
+        
+        await assignment.save();
+        assignmentCount++;
+      }
+    }
+    console.log(`✅ Created ${assignmentCount} assignments`);
 
     // Create students
     console.log('👥 Creating students...');
@@ -281,36 +281,6 @@ const seedDatabase = async () => {
       createdStudents.push(student);
     }
     console.log(`✅ Created ${createdStudents.length} students`);
-
-    // Create HARDCODED 8 assignments for ALL students
-    console.log('📝 Creating assignments (8 hardcoded for all students)...');
-    let assignmentCount = 0;
-    
-    for (const student of createdStudents) {
-      // For each student, create all 8 assignments
-      // Use student's FIRST subject for all assignments (simpler)
-      const firstSubjectId = student.assignedSubjects[0];
-      
-      for (let i = 0; i < hardcodedAssignments.length; i++) {
-        const template = hardcodedAssignments[i];
-        
-        const assignment = new Assignment({
-          studentId: student._id, // IMPORTANT: Link to specific student
-          subjectId: firstSubjectId,
-          title: template.title,
-          description: template.description,
-          assignedDate: template.assignedDate,
-          dueDate: template.dueDate,
-          totalMarks: template.totalMarks,
-          status: template.status,
-          priority: template.priority
-        });
-        
-        await assignment.save();
-        assignmentCount++;
-      }
-    }
-    console.log(`✅ Created ${assignmentCount} assignments (${hardcodedAssignments.length} per student)`);
 
     // Create marks for each student-subject combination
     console.log('📊 Creating marks records...');
@@ -368,9 +338,8 @@ const seedDatabase = async () => {
     console.log(`   - ${subjects.length} subjects`);
     console.log(`   - ${createdStudents.length} students`);
     console.log(`   - ${marksCount} marks records`);
-    console.log(`   - ${subjects.length} exam schedules (dates in Feb-April 2026)`);
-    console.log(`   - ${assignmentCount} assignments (8 per student, 2 completed + 6 upcoming)`);
-    console.log(`   - Assignment deadlines: March 15-17, 2026\n`);
+    console.log(`   - ${subjects.length} exam schedules`);
+    console.log(`   - ${assignmentCount} assignments\n`);
 
   } catch (error) {
     console.error('❌ Seeding error:', error);

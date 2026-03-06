@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Exam Schedule - Student Portal</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <!-- Navigation -->
+  <%- include('partials/navbar') %>
+
+  <div class="container-fluid">
+    <div class="row">
+      <!-- Sidebar -->
+      <%- include('partials/sidebar') %>
+
+      <!-- Main Content -->
+      <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+          <h1 class="h2">
+            <i class="bi bi-calendar-event"></i> Exam Schedule
+          </h1>
+        </div>
+
+        <!-- Academic Info -->
+        <div class="alert alert-info mb-4">
+          <i class="bi bi-info-circle-fill"></i>
+          <strong>Academic Year:</strong> 2024-2025 | <strong>Semester:</strong> Spring 2025
+        </div>
+
+        <!-- Exam Schedule Table -->
+        <div class="card shadow mb-4">
+          <div class="card-header bg-primary text-white">
+            <h5 class="mb-0"><i class="bi bi-calendar3"></i> Complete Exam Schedule</h5>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-hover table-striped">
+                <thead class="table-dark">
+                  <tr>
+                    <th>Subject</th>
+                    <th>Code</th>
+                    <th>Quiz 1</th>
+                    <th>Quiz 2</th>
+                    <th>Quiz 3</th>
+                    <th>Mid Sem</th>
+                    <th>Quiz 4</th>
+                    <th>Quiz 5</th>
+                    <th>Quiz 6</th>
+                    <th>End Sem</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% subjects.forEach(subject => { 
+                    const schedule = scheduleMap[subject._id.toString()];
+                    if (schedule) {
+                  %>
+                    <tr>
+                      <td><strong><%= subject.subjectName %></strong></td>
+                      <td><span class="badge bg-secondary"><%= subject.subjectCode %></span></td>
+                      <td><%= new Date(schedule.quiz1Date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) %></td>
+                      <td><%= new Date(schedule.quiz2Date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) %></td>
+                      <td><%= new Date(schedule.quiz3Date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) %></td>
+                      <td class="table-warning"><strong><%= new Date(schedule.midSemDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) %></strong></td>
+                      <td><%= new Date(schedule.quiz4Date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) %></td>
+                      <td><%= new Date(schedule.quiz5Date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) %></td>
+                      <td><%= new Date(schedule.quiz6Date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) %></td>
+                      <td class="table-danger"><strong><%= new Date(schedule.endSemDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) %></strong></td>
+                    </tr>
+                  <% } else { %>
+                    <tr>
+                      <td><strong><%= subject.subjectName %></strong></td>
+                      <td><span class="badge bg-secondary"><%= subject.subjectCode %></span></td>
+                      <td colspan="8" class="text-center text-muted">Schedule not available</td>
+                    </tr>
+                  <% } %>
+                  <% }); %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Timeline View -->
+        <div class="row">
+          <div class="col-md-6 mb-4">
+            <div class="card shadow">
+              <div class="card-header bg-warning text-dark">
+                <h5 class="mb-0"><i class="bi bi-calendar-range"></i> February Exams (Pre Mid-Sem)</h5>
+              </div>
+              <div class="card-body">
+                <p class="text-muted">Last two weeks of February</p>
+                <ul class="list-group">
+                  <% subjects.forEach(subject => { 
+                    const schedule = scheduleMap[subject._id.toString()];
+                    if (schedule) {
+                  %>
+                    <li class="list-group-item">
+                      <strong><%= subject.subjectCode %></strong> - <%= subject.subjectName %>
+                      <ul class="mt-2">
+                        <li>Quiz 1: <%= new Date(schedule.quiz1Date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) %></li>
+                        <li>Quiz 2: <%= new Date(schedule.quiz2Date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) %></li>
+                        <li>Quiz 3: <%= new Date(schedule.quiz3Date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) %></li>
+                        <li><strong>Mid Sem: <%= new Date(schedule.midSemDate).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) %></strong></li>
+                      </ul>
+                    </li>
+                  <% } %>
+                  <% }); %>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6 mb-4">
+            <div class="card shadow">
+              <div class="card-header bg-danger text-white">
+                <h5 class="mb-0"><i class="bi bi-calendar-range-fill"></i> April Exams (Pre End-Sem)</h5>
+              </div>
+              <div class="card-body">
+                <p class="text-muted">Last three weeks of April</p>
+                <ul class="list-group">
+                  <% subjects.forEach(subject => { 
+                    const schedule = scheduleMap[subject._id.toString()];
+                    if (schedule) {
+                  %>
+                    <li class="list-group-item">
+                      <strong><%= subject.subjectCode %></strong> - <%= subject.subjectName %>
+                      <ul class="mt-2">
+                        <li>Quiz 4: <%= new Date(schedule.quiz4Date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) %></li>
+                        <li>Quiz 5: <%= new Date(schedule.quiz5Date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) %></li>
+                        <li>Quiz 6: <%= new Date(schedule.quiz6Date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) %></li>
+                        <li><strong>End Sem: <%= new Date(schedule.endSemDate).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) %></strong></li>
+                      </ul>
+                    </li>
+                  <% } %>
+                  <% }); %>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Exam Tips -->
+        <div class="card shadow">
+          <div class="card-header bg-info text-white">
+            <h5 class="mb-0"><i class="bi bi-lightbulb"></i> Exam Preparation Tips</h5>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-4 mb-3">
+                <div class="d-flex">
+                  <i class="bi bi-book text-primary display-6 me-3"></i>
+                  <div>
+                    <h6>Start Early</h6>
+                    <p class="text-muted small">Begin revision at least 2 weeks before exams</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4 mb-3">
+                <div class="d-flex">
+                  <i class="bi bi-clock text-success display-6 me-3"></i>
+                  <div>
+                    <h6>Time Management</h6>
+                    <p class="text-muted small">Create a study schedule and stick to it</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4 mb-3">
+                <div class="d-flex">
+                  <i class="bi bi-people text-warning display-6 me-3"></i>
+                  <div>
+                    <h6>Group Study</h6>
+                    <p class="text-muted small">Collaborate with peers for better understanding</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/main.js"></script>
+</body>
+</html>

@@ -288,15 +288,13 @@ const seedDatabase = async () => {
     
     for (const student of createdStudents) {
       // For each student, create all 8 assignments
-      // Use student's FIRST subject for all assignments (simpler)
-      const firstSubjectId = student.assignedSubjects[0];
-      
+      // Assign to first subject of the student (or cycle through subjects)
       for (let i = 0; i < hardcodedAssignments.length; i++) {
         const template = hardcodedAssignments[i];
+        const subjectIndex = i % student.assignedSubjects.length; // Cycle through student's subjects
         
         const assignment = new Assignment({
-          studentId: student._id, // IMPORTANT: Link to specific student
-          subjectId: firstSubjectId,
+          subjectId: student.assignedSubjects[subjectIndex],
           title: template.title,
           description: template.description,
           assignedDate: template.assignedDate,
