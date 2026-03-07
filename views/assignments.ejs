@@ -112,7 +112,7 @@
                         <p class="card-text"><%= assignment.description %></p>
                         <div class="d-flex justify-content-between align-items-center">
                           <small class="text-muted">
-                            <i class="bi bi-calendar"></i> Due: <%= new Date(assignment.dueDate).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }) %>
+                            <i class="bi bi-calendar"></i> Due: <%= new Date(assignment.dueDate).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }) %> at <%= new Date(assignment.dueDate).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }) %>
                           </small>
                           <span class="badge bg-secondary"><%= assignment.totalMarks %> marks</span>
                         </div>
@@ -150,7 +150,7 @@
                     <p class="mb-1"><%= assignment.description %></p>
                     <small>
                       <i class="bi bi-book"></i> <%= assignment.subjectId.subjectName %> |
-                      <i class="bi bi-calendar-x"></i> Was due: <%= new Date(assignment.dueDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) %>
+                      <i class="bi bi-calendar-x"></i> Was due: <%= new Date(assignment.dueDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) %> at <%= new Date(assignment.dueDate).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }) %>
                     </small>
                   </div>
                 <% }); %>
@@ -172,7 +172,7 @@
                     <tr>
                       <th>Assignment</th>
                       <th>Subject</th>
-                      <th>Submitted On</th>
+                      <th>Due date</th>
                       <th>Total Marks</th>
                       <th>Status</th>
                     </tr>

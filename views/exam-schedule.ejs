@@ -28,7 +28,7 @@
         <!-- Academic Info -->
         <div class="alert alert-info mb-4">
           <i class="bi bi-info-circle-fill"></i>
-          <strong>Academic Year:</strong> 2024-2025 | <strong>Semester:</strong> Spring 2025
+          <strong>Academic Year:</strong> 2025-2026 | <strong>Semester:</strong> Spring 2026
         </div>
 
         <!-- Exam Schedule Table -->
@@ -61,14 +61,38 @@
                     <tr>
                       <td><strong><%= subject.subjectName %></strong></td>
                       <td><span class="badge bg-secondary"><%= subject.subjectCode %></span></td>
-                      <td><%= new Date(schedule.quiz1Date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) %></td>
-                      <td><%= new Date(schedule.quiz2Date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) %></td>
-                      <td><%= new Date(schedule.quiz3Date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) %></td>
-                      <td class="table-warning"><strong><%= new Date(schedule.midSemDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) %></strong></td>
-                      <td><%= new Date(schedule.quiz4Date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) %></td>
-                      <td><%= new Date(schedule.quiz5Date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) %></td>
-                      <td><%= new Date(schedule.quiz6Date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) %></td>
-                      <td class="table-danger"><strong><%= new Date(schedule.endSemDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) %></strong></td>
+                      <td>
+                        <%= new Date(schedule.quiz1Date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) %><br>
+                        <small class="text-muted"><%= new Date(schedule.quiz1Date).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }) %></small>
+                      </td>
+                      <td>
+                        <%= new Date(schedule.quiz2Date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) %><br>
+                        <small class="text-muted"><%= new Date(schedule.quiz2Date).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }) %></small>
+                      </td>
+                      <td>
+                        <%= new Date(schedule.quiz3Date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) %><br>
+                        <small class="text-muted"><%= new Date(schedule.quiz3Date).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }) %></small>
+                      </td>
+                      <td class="table-warning">
+                        <strong><%= new Date(schedule.midSemDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) %></strong><br>
+                        <small class="text-muted"><%= new Date(schedule.midSemDate).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }) %></small>
+                      </td>
+                      <td>
+                        <%= new Date(schedule.quiz4Date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) %><br>
+                        <small class="text-muted"><%= new Date(schedule.quiz4Date).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }) %></small>
+                      </td>
+                      <td>
+                        <%= new Date(schedule.quiz5Date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) %><br>
+                        <small class="text-muted"><%= new Date(schedule.quiz5Date).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }) %></small>
+                      </td>
+                      <td>
+                        <%= new Date(schedule.quiz6Date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) %><br>
+                        <small class="text-muted"><%= new Date(schedule.quiz6Date).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }) %></small>
+                      </td>
+                      <td class="table-danger">
+                        <strong><%= new Date(schedule.endSemDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) %></strong><br>
+                        <small class="text-muted"><%= new Date(schedule.endSemDate).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }) %></small>
+                      </td>
                     </tr>
                   <% } else { %>
                     <tr>
@@ -89,10 +113,10 @@
           <div class="col-md-6 mb-4">
             <div class="card shadow">
               <div class="card-header bg-warning text-dark">
-                <h5 class="mb-0"><i class="bi bi-calendar-range"></i> February Exams (Pre Mid-Sem)</h5>
+                <h5 class="mb-0"><i class="bi bi-calendar-range"></i> March Quizzes & Mid-Sem</h5>
               </div>
               <div class="card-body">
-                <p class="text-muted">Last two weeks of February</p>
+                <p class="text-muted">Quizzes: March 11-20 | Mid-Sem: March 28-31</p>
                 <ul class="list-group">
                   <% subjects.forEach(subject => { 
                     const schedule = scheduleMap[subject._id.toString()];
@@ -101,10 +125,10 @@
                     <li class="list-group-item">
                       <strong><%= subject.subjectCode %></strong> - <%= subject.subjectName %>
                       <ul class="mt-2">
-                        <li>Quiz 1: <%= new Date(schedule.quiz1Date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) %></li>
-                        <li>Quiz 2: <%= new Date(schedule.quiz2Date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) %></li>
-                        <li>Quiz 3: <%= new Date(schedule.quiz3Date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) %></li>
-                        <li><strong>Mid Sem: <%= new Date(schedule.midSemDate).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) %></strong></li>
+                        <li>Quiz 1: <%= new Date(schedule.quiz1Date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) %> at <%= new Date(schedule.quiz1Date).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }) %></li>
+                        <li>Quiz 2: <%= new Date(schedule.quiz2Date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) %> at <%= new Date(schedule.quiz2Date).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }) %></li>
+                        <li>Quiz 3: <%= new Date(schedule.quiz3Date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) %> at <%= new Date(schedule.quiz3Date).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }) %></li>
+                        <li><strong>Mid Sem: <%= new Date(schedule.midSemDate).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) %> at <%= new Date(schedule.midSemDate).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }) %></strong></li>
                       </ul>
                     </li>
                   <% } %>
@@ -117,10 +141,10 @@
           <div class="col-md-6 mb-4">
             <div class="card shadow">
               <div class="card-header bg-danger text-white">
-                <h5 class="mb-0"><i class="bi bi-calendar-range-fill"></i> April Exams (Pre End-Sem)</h5>
+                <h5 class="mb-0"><i class="bi bi-calendar-range-fill"></i> April Quizzes & End-Sem</h5>
               </div>
               <div class="card-body">
-                <p class="text-muted">Last three weeks of April</p>
+                <p class="text-muted">Quizzes: April 11-20 | End-Sem: April 25-30</p>
                 <ul class="list-group">
                   <% subjects.forEach(subject => { 
                     const schedule = scheduleMap[subject._id.toString()];
@@ -129,10 +153,10 @@
                     <li class="list-group-item">
                       <strong><%= subject.subjectCode %></strong> - <%= subject.subjectName %>
                       <ul class="mt-2">
-                        <li>Quiz 4: <%= new Date(schedule.quiz4Date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) %></li>
-                        <li>Quiz 5: <%= new Date(schedule.quiz5Date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) %></li>
-                        <li>Quiz 6: <%= new Date(schedule.quiz6Date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) %></li>
-                        <li><strong>End Sem: <%= new Date(schedule.endSemDate).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) %></strong></li>
+                        <li>Quiz 4: <%= new Date(schedule.quiz4Date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) %> at <%= new Date(schedule.quiz4Date).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }) %></li>
+                        <li>Quiz 5: <%= new Date(schedule.quiz5Date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) %> at <%= new Date(schedule.quiz5Date).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }) %></li>
+                        <li>Quiz 6: <%= new Date(schedule.quiz6Date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) %> at <%= new Date(schedule.quiz6Date).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }) %></li>
+                        <li><strong>End Sem: <%= new Date(schedule.endSemDate).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) %> at <%= new Date(schedule.endSemDate).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }) %></strong></li>
                       </ul>
                     </li>
                   <% } %>

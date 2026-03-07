@@ -4,6 +4,20 @@ const Marks = require('../models/Marks');
 const ExamSchedule = require('../models/ExamSchedule');
 const Assignment = require('../models/Assignment');
 
+// Helper function to calculate end time for quizzes (30 minutes)
+const getQuizEndTime = (startDate) => {
+  const endDate = new Date(startDate);
+  endDate.setMinutes(endDate.getMinutes() + 30);
+  return endDate;
+};
+
+// Helper function to calculate end time for exams (2 hours)
+const getExamEndTime = (startDate) => {
+  const endDate = new Date(startDate);
+  endDate.setHours(endDate.getHours() + 2);
+  return endDate;
+};
+
 // Get student information
 exports.getStudent = async (req, res) => {
   try {
@@ -230,14 +244,46 @@ exports.getStudentExamSchedule = async (req, res) => {
         professorEmail: schedule.subjectId.professorEmail
       },
       exams: {
-        quiz1: schedule.quiz1Date,
-        quiz2: schedule.quiz2Date,
-        quiz3: schedule.quiz3Date,
-        midSem: schedule.midSemDate,
-        quiz4: schedule.quiz4Date,
-        quiz5: schedule.quiz5Date,
-        quiz6: schedule.quiz6Date,
-        endSem: schedule.endSemDate
+        quiz1: {
+          startTime: schedule.quiz1Date,
+          endTime: getQuizEndTime(schedule.quiz1Date),
+          duration: '30 minutes'
+        },
+        quiz2: {
+          startTime: schedule.quiz2Date,
+          endTime: getQuizEndTime(schedule.quiz2Date),
+          duration: '30 minutes'
+        },
+        quiz3: {
+          startTime: schedule.quiz3Date,
+          endTime: getQuizEndTime(schedule.quiz3Date),
+          duration: '30 minutes'
+        },
+        midSem: {
+          startTime: schedule.midSemDate,
+          endTime: getExamEndTime(schedule.midSemDate),
+          duration: '2 hours'
+        },
+        quiz4: {
+          startTime: schedule.quiz4Date,
+          endTime: getQuizEndTime(schedule.quiz4Date),
+          duration: '30 minutes'
+        },
+        quiz5: {
+          startTime: schedule.quiz5Date,
+          endTime: getQuizEndTime(schedule.quiz5Date),
+          duration: '30 minutes'
+        },
+        quiz6: {
+          startTime: schedule.quiz6Date,
+          endTime: getQuizEndTime(schedule.quiz6Date),
+          duration: '30 minutes'
+        },
+        endSem: {
+          startTime: schedule.endSemDate,
+          endTime: getExamEndTime(schedule.endSemDate),
+          duration: '2 hours'
+        }
       },
       academicYear: schedule.academicYear,
       semester: schedule.semester

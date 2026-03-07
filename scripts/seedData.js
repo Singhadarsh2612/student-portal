@@ -20,43 +20,80 @@ const connectDB = async () => {
 // Generate random number between min and max
 const randomNumber = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 
-// Helper function to get random date in February (last 2 weeks)
-const getFebruaryDate = (year = 2026) => {
-  const day = randomNumber(15, 28); // Last 2 weeks of February
-  return new Date(year, 1, day); // Month is 0-indexed, so 1 = February
+// Helper function to get random date between start and end dates
+const getRandomDate = (startDate, endDate) => {
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+  const randomTime = start.getTime() + Math.random() * (end.getTime() - start.getTime());
+  return new Date(randomTime);
 };
 
-// Helper function to get random date in April (last 3 weeks)
-const getAprilDate = (year = 2026) => {
-  const day = randomNumber(10, 30); // Last 3 weeks of April
-  return new Date(year, 3, day); // Month is 0-indexed, so 3 = April
+// Helper function to set exam time based on count for that day
+const assignExamTime = (date, countForDay, isSecond = false) => {
+  const examDate = new Date(date);
+  if (countForDay === 1 || !isSecond) {
+    // Single exam or first exam: 10:00 AM - 12:00 PM
+    examDate.setHours(10, 0, 0, 0);
+  } else {
+    // Second exam: 4:00 PM - 6:00 PM
+    examDate.setHours(16, 0, 0, 0);
+  }
+  return examDate;
 };
 
-// Helper to ensure max 2 exams per day
-const distributeExamDates = (month, count) => {
+// Helper function to set quiz time based on count for that day
+const assignQuizTime = (date, countForDay, isSecond = false) => {
+  const quizDate = new Date(date);
+  if (countForDay === 1 || !isSecond) {
+    // Single quiz or first quiz: 10:00 AM - 10:30 AM
+    quizDate.setHours(10, 0, 0, 0);
+  } else {
+    // Second quiz: 6:00 PM - 6:30 PM
+    quizDate.setHours(18, 0, 0, 0);
+  }
+  return quizDate;
+};
+
+// Helper function to distribute dates with max 2 per day
+const distributeScheduledDates = (startDate, endDate, count, type = 'exam') => {
   const dates = [];
   const dateMap = new Map();
   
   for (let i = 0; i < count; i++) {
     let attempts = 0;
-    let date;
+    let selectedDate;
     
     do {
-      date = month === 'feb' ? getFebruaryDate() : getAprilDate();
-      const dateKey = date.toDateString();
-      const examsOnDate = dateMap.get(dateKey) || 0;
+      const randomDate = getRandomDate(startDate, endDate);
+      const dateKey = randomDate.toDateString();
+      const countForDay = dateMap.get(dateKey) || 0;
       
-      if (examsOnDate < 2) {
-        dateMap.set(dateKey, examsOnDate + 1);
-        dates.push(date);
+      if (countForDay < 2) {
+        // Set appropriate time based on count for this day
+        const isSecond = countForDay === 1;
+        if (type === 'quiz') {
+          selectedDate = assignQuizTime(randomDate, countForDay + 1, isSecond);
+        } else {
+          selectedDate = assignExamTime(randomDate, countForDay + 1, isSecond);
+        }
+        
+        dateMap.set(dateKey, countForDay + 1);
+        dates.push(selectedDate);
         break;
       }
       
       attempts++;
-    } while (attempts < 50);
+    } while (attempts < 100);
     
-    if (attempts >= 50) {
-      dates.push(date); // Fallback if we can't find a suitable date
+    if (attempts >= 100) {
+      // Fallback: just add a date even if it violates the rule
+      const fallbackDate = getRandomDate(startDate, endDate);
+      if (type === 'quiz') {
+        selectedDate = assignQuizTime(fallbackDate, 1, false);
+      } else {
+        selectedDate = assignExamTime(fallbackDate, 1, false);
+      }
+      dates.push(selectedDate);
     }
   }
   
@@ -144,12 +181,13 @@ const studentsData = [
 ];
 
 // HARDCODED 8 assignments - same for all students
+// Deadlines set to 11:59 PM
 const hardcodedAssignments = [
   {
     title: 'Binary Search Tree Implementation',
     description: 'Implement BST with insert, delete, and search operations in C++',
-    assignedDate: new Date(2026, 2, 1), // March 1, 2026
-    dueDate: new Date(2026, 2, 15), // March 15, 2026
+    assignedDate: new Date(2026, 2, 1, 0, 0, 0), // March 1, 2026 12:00 AM
+    dueDate: new Date(2026, 2, 15, 23, 59, 0), // March 15, 2026 11:59 PM
     totalMarks: 100,
     status: 'submitted', // COMPLETED 1
     priority: 'high'
@@ -157,8 +195,8 @@ const hardcodedAssignments = [
   {
     title: 'Database Normalization Project',
     description: 'Normalize a given database schema up to 3NF and create ER diagram',
-    assignedDate: new Date(2026, 2, 3), // March 3, 2026
-    dueDate: new Date(2026, 2, 16), // March 16, 2026
+    assignedDate: new Date(2026, 2, 3, 0, 0, 0), // March 3, 2026 12:00 AM
+    dueDate: new Date(2026, 2, 16, 23, 59, 0), // March 16, 2026 11:59 PM
     totalMarks: 75,
     status: 'submitted', // COMPLETED 2
     priority: 'medium'
@@ -166,8 +204,8 @@ const hardcodedAssignments = [
   {
     title: 'Process Scheduling Algorithms',
     description: 'Compare FCFS, SJF, and Round Robin scheduling algorithms',
-    assignedDate: new Date(2026, 2, 5), // March 5, 2026
-    dueDate: new Date(2026, 2, 15), // March 15, 2026 - UPCOMING
+    assignedDate: new Date(2026, 2, 5, 0, 0, 0), // March 5, 2026 12:00 AM
+    dueDate: new Date(2026, 2, 15, 23, 59, 0), // March 15, 2026 11:59 PM - UPCOMING
     totalMarks: 50,
     status: 'pending',
     priority: 'high'
@@ -175,8 +213,8 @@ const hardcodedAssignments = [
   {
     title: 'Socket Programming',
     description: 'Create a client-server chat application using TCP sockets',
-    assignedDate: new Date(2026, 2, 7), // March 7, 2026
-    dueDate: new Date(2026, 2, 16), // March 16, 2026 - UPCOMING
+    assignedDate: new Date(2026, 2, 7, 0, 0, 0), // March 7, 2026 12:00 AM
+    dueDate: new Date(2026, 2, 16, 23, 59, 0), // March 16, 2026 11:59 PM - UPCOMING
     totalMarks: 100,
     status: 'pending',
     priority: 'high'
@@ -184,8 +222,8 @@ const hardcodedAssignments = [
   {
     title: 'REST API Development',
     description: 'Build a RESTful API for a todo application using Express.js',
-    assignedDate: new Date(2026, 2, 8), // March 8, 2026
-    dueDate: new Date(2026, 2, 16), // March 16, 2026 - UPCOMING
+    assignedDate: new Date(2026, 2, 8, 0, 0, 0), // March 8, 2026 12:00 AM
+    dueDate: new Date(2026, 2, 16, 23, 59, 0), // March 16, 2026 11:59 PM - UPCOMING
     totalMarks: 150,
     status: 'pending',
     priority: 'high'
@@ -193,8 +231,8 @@ const hardcodedAssignments = [
   {
     title: 'Unit Testing Project',
     description: 'Write comprehensive unit tests using Jest for a given module',
-    assignedDate: new Date(2026, 2, 9), // March 9, 2026
-    dueDate: new Date(2026, 2, 17), // March 17, 2026 - UPCOMING
+    assignedDate: new Date(2026, 2, 9, 0, 0, 0), // March 9, 2026 12:00 AM
+    dueDate: new Date(2026, 2, 17, 23, 59, 0), // March 17, 2026 11:59 PM - UPCOMING
     totalMarks: 50,
     status: 'pending',
     priority: 'medium'
@@ -202,8 +240,8 @@ const hardcodedAssignments = [
   {
     title: 'SQL Query Optimization',
     description: 'Optimize slow queries and implement proper indexing strategies',
-    assignedDate: new Date(2026, 2, 10), // March 10, 2026
-    dueDate: new Date(2026, 2, 17), // March 17, 2026 - UPCOMING
+    assignedDate: new Date(2026, 2, 10, 0, 0, 0), // March 10, 2026 12:00 AM
+    dueDate: new Date(2026, 2, 17, 23, 59, 0), // March 17, 2026 11:59 PM - UPCOMING
     totalMarks: 75,
     status: 'pending',
     priority: 'medium'
@@ -211,8 +249,8 @@ const hardcodedAssignments = [
   {
     title: 'Frontend Development Challenge',
     description: 'Create a responsive portfolio website using React and Tailwind CSS',
-    assignedDate: new Date(2026, 2, 11), // March 11, 2026
-    dueDate: new Date(2026, 2, 17), // March 17, 2026 - UPCOMING
+    assignedDate: new Date(2026, 2, 11, 0, 0, 0), // March 11, 2026 12:00 AM
+    dueDate: new Date(2026, 2, 17, 23, 59, 0), // March 17, 2026 11:59 PM - UPCOMING
     totalMarks: 100,
     status: 'pending',
     priority: 'high'
@@ -238,32 +276,56 @@ const seedDatabase = async () => {
     const subjects = await Subject.insertMany(subjectsData);
     console.log(`✅ Created ${subjects.length} subjects`);
 
-    // Create exam schedules for all subjects
-    console.log('📅 Creating exam schedules...');
-    for (const subject of subjects) {
-      // Distribute February exams (Quiz 1-3, Mid Sem)
-      const febDates = distributeExamDates('feb', 4);
+    // Create exam schedules for all subjects with new scheduling rules
+    console.log('📅 Creating exam schedules with time slots...');
+    
+    // Define date windows
+    const quiz123Start = new Date(2026, 2, 11); // March 11, 2026
+    const quiz123End = new Date(2026, 2, 20);   // March 20, 2026
+    const midSemStart = new Date(2026, 2, 28);  // March 28, 2026
+    const midSemEnd = new Date(2026, 2, 31);    // March 31, 2026
+    const quiz456Start = new Date(2026, 3, 11); // April 11, 2026
+    const quiz456End = new Date(2026, 3, 20);   // April 20, 2026
+    const endSemStart = new Date(2026, 3, 25);  // April 25, 2026
+    const endSemEnd = new Date(2026, 3, 30);    // April 30, 2026
+    
+    // Distribute quiz dates (3 quizzes each period)
+    const quiz123Dates = distributeScheduledDates(quiz123Start, quiz123End, subjects.length, 'quiz');
+    const quiz456Dates = distributeScheduledDates(quiz456Start, quiz456End, subjects.length, 'quiz');
+    
+    // Distribute exam dates (midsem and endsem)
+    const midSemDates = distributeScheduledDates(midSemStart, midSemEnd, subjects.length, 'exam');
+    const endSemDates = distributeScheduledDates(endSemStart, endSemEnd, subjects.length, 'exam');
+    
+    for (let i = 0; i < subjects.length; i++) {
+      const subject = subjects[i];
       
-      // Distribute April exams (Quiz 4-6, End Sem)
-      const aprilDates = distributeExamDates('apr', 4);
+      // Get individual quiz dates for this subject (distribute across the 3-quiz dates)
+      const quiz1Date = quiz123Dates[i % quiz123Dates.length];
+      const quiz2Date = quiz123Dates[(i + 1) % quiz123Dates.length];
+      const quiz3Date = quiz123Dates[(i + 2) % quiz123Dates.length];
+      
+      const quiz4Date = quiz456Dates[i % quiz456Dates.length];
+      const quiz5Date = quiz456Dates[(i + 1) % quiz456Dates.length];
+      const quiz6Date = quiz456Dates[(i + 2) % quiz456Dates.length];
       
       const examSchedule = new ExamSchedule({
         subjectId: subject._id,
-        quiz1Date: febDates[0],
-        quiz2Date: febDates[1],
-        quiz3Date: febDates[2],
-        midSemDate: febDates[3], // Mid sem after all quizzes
-        quiz4Date: aprilDates[0],
-        quiz5Date: aprilDates[1],
-        quiz6Date: aprilDates[2],
-        endSemDate: aprilDates[3], // End sem after all quizzes
+        quiz1Date: quiz1Date,
+        quiz2Date: quiz2Date,
+        quiz3Date: quiz3Date,
+        midSemDate: midSemDates[i],
+        quiz4Date: quiz4Date,
+        quiz5Date: quiz5Date,
+        quiz6Date: quiz6Date,
+        endSemDate: endSemDates[i],
         academicYear: '2025-2026',
         semester: 'Spring 2026'
       });
       
       await examSchedule.save();
     }
-    console.log(`✅ Created ${subjects.length} exam schedules`);
+    console.log(`✅ Created ${subjects.length} exam schedules with proper time slots`);
 
     // Create students
     console.log('👥 Creating students...');
@@ -283,7 +345,7 @@ const seedDatabase = async () => {
     console.log(`✅ Created ${createdStudents.length} students`);
 
     // Create HARDCODED 8 assignments for ALL students
-    console.log('📝 Creating assignments (8 hardcoded for all students)...');
+    console.log('📝 Creating assignments (8 hardcoded for all students, deadlines at 11:59 PM)...');
     let assignmentCount = 0;
     
     for (const student of createdStudents) {
@@ -300,7 +362,7 @@ const seedDatabase = async () => {
           title: template.title,
           description: template.description,
           assignedDate: template.assignedDate,
-          dueDate: template.dueDate,
+          dueDate: template.dueDate, // Set to 11:59 PM
           totalMarks: template.totalMarks,
           status: template.status,
           priority: template.priority
@@ -368,9 +430,16 @@ const seedDatabase = async () => {
     console.log(`   - ${subjects.length} subjects`);
     console.log(`   - ${createdStudents.length} students`);
     console.log(`   - ${marksCount} marks records`);
-    console.log(`   - ${subjects.length} exam schedules (dates in Feb-April 2026)`);
+    console.log(`   - ${subjects.length} exam schedules`);
     console.log(`   - ${assignmentCount} assignments (8 per student, 2 completed + 6 upcoming)`);
-    console.log(`   - Assignment deadlines: March 15-17, 2026\n`);
+    console.log('\n📅 Scheduling Details:');
+    console.log('   - Quizzes 1-3: March 11-20, 2026');
+    console.log('   - Quizzes 4-6: April 11-20, 2026');
+    console.log('   - Mid-semester: March 28-31, 2026');
+    console.log('   - End-semester: April 25-30, 2026');
+    console.log('   - Quiz times: 10:00-10:30 AM (1st) / 6:00-6:30 PM (2nd)');
+    console.log('   - Exam times: 10:00 AM-12:00 PM (1st) / 4:00-6:00 PM (2nd)');
+    console.log('   - Assignment deadlines: 11:59 PM\n');
 
   } catch (error) {
     console.error('❌ Seeding error:', error);
