@@ -47,9 +47,10 @@ app.get('/', (req, res) => {
   res.render('home');
 });
 
+app.use('/api', apiRoutes);
 app.use('/', authRoutes);
 app.use('/', dashboardRoutes);
-app.use('/api', apiRoutes);
+
 
 // 404 handler
 app.use((req, res) => {
